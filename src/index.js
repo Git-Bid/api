@@ -84,7 +84,7 @@ async function start() {
                     price_data: {
                         currency: 'usd',
                         product_data: {
-                            name: 'Sponsor Issue #{issue_id}',
+                            name: 'Sponsor Issue #${issue_id}',
                             //images: ['https://i.imgur.com/EHyR2nP.png'],
                         },
                         unit_amount: amount,

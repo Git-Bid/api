@@ -72,7 +72,7 @@ async function start() {
 
     app.post("/post/bounty", isBounty, async(req, res) => {
         try {
-            let query = `INSERT INTO bounties (issue, bounty_amount, github) Values ('hasura/graphql-engine/issues/6337', '2000', 'https://github.com/henrymarks1');`;
+            let query = `INSERT INTO bounties (issue, bounty_amount, github) Values ('${req.body.issue}', '${req.body.bounty_amount}', '${req.body.github}');`;
             client.query(query, (err, resp) => {
                 console.log(err, resp);
                 res.send(resp);

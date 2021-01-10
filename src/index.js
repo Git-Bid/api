@@ -45,7 +45,7 @@ app.use(bodyParser.json());
 const isLoggedIn = require('./middleware/auth')
 const isBounty = require('./middleware/bounty')
 
-const port = 80
+const port = 8080
 
 
 async function start() {
@@ -74,9 +74,10 @@ async function start() {
     require('./migrations')(app, client);
 
 
-    app.get("/issue/:org/:repo/issues/:issue_id", (req, res) => {
+    app.get("/issue/:org/:repo/issues/:issue_id",(req, res) => {
         try {
-            let query = `SELECT * FROM bounties WHERE issue IN ('hasura/graphql-engine/issues/6337');`;
+            console.log(req.body.issue)
+            let query = `SELECT * FROM bounties WHERE issue IN ('${req.body.issue}');`;
             client.query(query, (err, resp) => {
                 res.send(resp.rows);
                 client.end();

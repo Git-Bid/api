@@ -6,8 +6,7 @@ const { Client } = require('node-postgres');
 const bodyParser = require('body-parser')
 require('./passport')
 const redis = require('redis');
-require('./debug')(app);
-require('./auth.js')(app);
+
 
 
 const redisStore = require('connect-redis')(session);
@@ -48,6 +47,10 @@ async function start() {
     });
 
     await client.connect()
+
+
+    require('./debug')(app);
+    require('./auth')(app);
 
     app.get("/issue/:org/:repo/issues/:issue_id", (req, res) => {
         res.send(req.params);

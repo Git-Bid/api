@@ -21,12 +21,12 @@ const redisStore = require('connect-redis')(express_session);
 const stripe = require('stripe')(process.env.stripe);
 
 
-const redisClient = redis.createClient({
-    host: process.env.redisclienthost,
-    port: process.env.redisclientport,
-    password: process.env.rediesclientpassword,
+// const redisClient = redis.createClient({
+//     host: process.env.redisclienthost,
+//     port: process.env.redisclientport,
+//     password: process.env.rediesclientpassword,
 
-});
+// });
 
 app.use(express_session({
     secret: 'Jacob iz hawt',
@@ -34,7 +34,7 @@ app.use(express_session({
     resave: false,
     saveUninitialized: true,
     cookie: { secure: false }, // Note that the cookie-parser module is no longer needed
-    store: new redisStore({ host: process.env.redisclienthost, port: process.env.redisclientport, password: process.env.rediesclientpassword, client: redisClient, ttl: 86400 }),
+    // store: new redisStore({ host: process.env.redisclienthost, port: process.env.redisclientport, password: process.env.rediesclientpassword, client: redisClient, ttl: 86400 }),
 }, ), );
 
 app.use(bodyParser.urlencoded({ extended: false }));

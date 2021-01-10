@@ -57,10 +57,10 @@ async function start() {
         database: process.env.database,
         password: process.env.password,
         port: process.env.postgresport, //5432
-        ssl: {
+        // ssl: {
 
-            ca: fs.readFileSync('./ca-certificate.crt').toString(),
-        }
+        //     ca: fs.readFileSync('./ca-certificate.crt').toString(),
+        // }
     });
 
 

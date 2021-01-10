@@ -49,7 +49,7 @@ async function start() {
     await client.connect()
 
 
-    require('./debug')(app);
+    require('./debug')(app, isLoggedIn);
     require('./auth')(app);
 
     app.get("/issue/:org/:repo/issues/:issue_id", (req, res) => {
@@ -67,19 +67,11 @@ async function start() {
         res.send(req.body.issue)
 
     });
+    
 
     //MIGRATIONS
-    app.get("/init", async(req, res) => {
-        let query = 'CREATE TABLE bounties (issue Text, bounty_amount real, Github Text);'
+    require('./migrations')(app, client);
 
-        let response = await client.query(query);
-        res.send(response)
-    })
-    app.get("/destory", async(req, res) => {
-        let query = 'DROP TABLE bounties';
-        let response = await client.query(query);
-        res.send(response)
-    })
 
     app.listen(port, () => {
         console.log(`Git.bid API listening at http://localhost:${port}`)

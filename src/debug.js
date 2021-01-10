@@ -1,6 +1,5 @@
 
-module.exports = function(app){
-    const isLoggedIn = require('./middleware/auth')
+module.exports = function(app, isLoggedIn){
 
 
     app.get('/hello', (req, res) => {

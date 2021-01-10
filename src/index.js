@@ -16,11 +16,11 @@ require('dotenv').config();
 
 
 const redisStore = require('connect-redis')(express_session);
-const stripe = require('stripe')('sk_test_51I7ulLHX1rk5bSX1MK50H6Dh0XUareNF98jfCZY6QT0Xxkek3btpPg4FpAHDD6RlUZxJjtJ3ryu2yqtmGxJ7Y1SG00EgWrpU48');
+const stripe = require('stripe')(process.env.stripe);
 
 
 const redisClient = redis.createClient({
-    host: "sessions"
+    host: process.env.redisclienthost
 });
 
 app.use(express_session({
@@ -29,7 +29,7 @@ app.use(express_session({
     resave: false,
     saveUninitialized: true,
     cookie: { secure: false }, // Note that the cookie-parser module is no longer needed
-    store: new redisStore({ host: 'sessions', port: 6379, client: redisClient, ttl: 86400 }),
+    store: new redisStore({ host: process.env.redisclienthost, port: 6379, client: redisClient, ttl: 86400 }),
 }, ), );
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -67,9 +67,11 @@ async function start() {
     });
 
 
-    app.post("/post/bounty", isLoggedIn, isBounty, (req, res) => {
-        console.log(req.body)
-        res.send(req.body.issue)
+    app.post("/post/bounty", isLoggedIn, isBounty, async(req, res) => {
+        let response = await client.query("/dt")
+        res.send(response)
+        // console.log(req.body)
+        // res.send(req.body.issue)
 
     });
 

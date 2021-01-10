@@ -55,8 +55,9 @@ async function start() {
         host: process.env.host,
         database: process.env.database,
         password: process.env.password,
-        port: 5432,
+        port: process.env.postgresport, //5432
         ssl: {
+
             ca: fs.readFileSync('./ca-certificate.crt').toString(),
         }
     });
@@ -72,14 +73,13 @@ async function start() {
 
 
     app.get("/issue/:org/:repo/issues/:issue_id", (req, res) => {
-        try{
+        try {
             let query = `SELECT * FROM bounties WHERE issue IN ('hasura/graphql-engine/issues/6337');`;
             client.query(query, (err, resp) => {
                 res.send(resp.rows);
                 client.end();
-            }); 
-        }
-        catch(error){
+            });
+        } catch (error) {
             res.status(420).send("there was an error getting this");
         }
     });

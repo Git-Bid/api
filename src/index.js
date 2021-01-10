@@ -80,12 +80,9 @@ async function start() {
             console.log(req.body.issue)
             let query = `SELECT * FROM bounties WHERE issue IN ('${req.body.issue}');`;
             client.query(query, (err, resp) => {
-                if (resp != null) {
-                    res.send(resp.rows);
+                res.send(resp.rows);
 
-                } else {
-                    res.send("ERROROROROOR")
-                }
+
 
                 client.end();
             });

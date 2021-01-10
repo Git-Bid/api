@@ -6,6 +6,8 @@ const { Client } = require('node-postgres');
 const bodyParser = require('body-parser')
 require('./passport')
 const redis = require('redis');
+require('dotenv').config();
+
 
 
 
@@ -38,19 +40,23 @@ const port = 8080
 
 
 async function start() {
+    console.log(process.env)
+
     const client = new Client({
-        user: 'username',
-        host: 'database',
-        database: 'postgres',
-        password: 'password',
+        user: process.env.user,
+        host: process.env.host,
+        database: process.env.database,
+        password: process.env.password,
         port: 5432
     });
+
 
     await client.connect()
 
 
     require('./debug')(app, isLoggedIn);
     require('./auth')(app);
+
 
     app.get("/issue/:org/:repo/issues/:issue_id", (req, res) => {
         res.send(req.params);

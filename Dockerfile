@@ -5,7 +5,7 @@ COPY package-lock.json package-lock.json
 
 RUN npm install
 
-EXPOSE 8080 8080
+EXPOSE 80 80
 
 COPY  . .
 

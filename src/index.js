@@ -92,10 +92,6 @@ async function start() {
         res.send(req.user);
     });
 
-    app.listen(port, () => {
-        console.log(`Git.bid API listening at http://localhost:${port}`)
-    })
-
     app.post("/post/bounty", isLoggedIn, isBounty, (req, res) => {
         console.log(req.body)
         res.send(req.body.issue)
@@ -119,6 +115,10 @@ async function start() {
         let query = 'DROP TABLE bounties';
         let response = await client.query(query);
         res.send(response)
+    })
+
+    app.listen(port, () => {
+        console.log(`Git.bid API listening at http://localhost:${port}`)
     })
 }
 

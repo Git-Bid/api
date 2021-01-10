@@ -70,13 +70,24 @@ async function start() {
     });
 
 
-    app.post("/post/bounty", isLoggedIn, isBounty, async(req, res) => {
-        let response = await client.query("/dt")
-        res.send(response)
+    app.post("/post/bounty", isLoggedIn, isBounty, async (req, res) => {
+        try {
+          let query = `INSERT INTO bounties (issue, bounty_amount, github) Values ('hasura/graphql-engine/issues/6337', '2000', 'https://github.com/henrymarks1');`;
+          let response = await client.query(query, (err, resp) => {
+            console.log(err, resp);
+            res.send(resp);
+    
+            client.end();
+          });
+        } catch (error) {
+          res.status(420).send("This table already exists my manz");
+        }
+    
+        res.send(response);
         // console.log(req.body)
         // res.send(req.body.issue)
-
-    });
+      });
+    
 
     const YOUR_DOMAIN = 'http://localhost:3000';
     app.post('/create/bounty', async(req, res) => {

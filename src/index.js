@@ -43,9 +43,10 @@ app.use(passport.session());
 app.use(bodyParser.json());
 
 const isLoggedIn = require('./middleware/auth')
-const isBounty = require('./middleware/bounty')
+const isBounty = require('./middleware/bounty');
+const e = require('express');
 
-const port = 8080
+const port = 80
 
 
 async function start() {
@@ -74,12 +75,18 @@ async function start() {
     require('./migrations')(app, client);
 
 
-    app.get("/issue/:org/:repo/issues/:issue_id",(req, res) => {
+    app.get("/issue/:org/:repo/issues/:issue_id", (req, res) => {
         try {
             console.log(req.body.issue)
             let query = `SELECT * FROM bounties WHERE issue IN ('${req.body.issue}');`;
             client.query(query, (err, resp) => {
-                res.send(resp.rows);
+                if (resp != null) {
+                    res.send(resp.rows);
+
+                } else {
+                    res.send(err)
+                }
+
                 client.end();
             });
         } catch (error) {
@@ -105,7 +112,7 @@ async function start() {
     });
 
 
-    const YOUR_DOMAIN = 'http://localhost:3000';
+    const YOUR_DOMAIN = 'http://gitbid.io';
     app.post('/create/bounty', async(req, res) => {
         let amount = req.body.amount;
         let issue_id = req.body.issue_id;

@@ -9,4 +9,4 @@ EXPOSE 8080 8080
 
 COPY  . .
 
-CMD ["npm", "run", "start"]
+CMD ["node", "src/index.js"]

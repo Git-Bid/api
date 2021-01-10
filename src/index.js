@@ -6,7 +6,7 @@ app.use(cors())
 
 var express_session = require("express-session");
 const passport = require('passport');
-const { Client } = require('node-postgres');
+const { Client } = require('pg');
 const bodyParser = require('body-parser')
 require('./passport')
 const redis = require('redis');

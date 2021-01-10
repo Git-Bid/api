@@ -142,7 +142,7 @@ async function start() {
     });
 
 
-    app.listen(port, () => {
+    app.listen(port, '0.0.0.0', () => {
         console.log(`Git.bid API listening at http://localhost:${port}`)
     })
 }

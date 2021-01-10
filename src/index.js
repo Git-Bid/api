@@ -1,6 +1,7 @@
 const express = require('express')
 var cors = require('cors')
 const fs = require('fs');
+var path = require('path');
 
 const app = express()
 app.use(cors())
@@ -57,10 +58,9 @@ async function start() {
         database: process.env.database,
         password: process.env.password,
         port: process.env.postgresport, //5432
-        // ssl: {
-
-        //     ca: fs.readFileSync('./ca-certificate.crt').toString(),
-        // }
+        ssl: {
+            ca: fs.readFileSync(path.join(__dirname, './ca-certificate.crt')).toString(),
+        }
     });
 
 

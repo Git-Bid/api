@@ -8,7 +8,7 @@ spec:
   hostNetwork: true
   containers:
     - name: api
-      image: registry.digitalocean.com/gitbid/api:29045e7b
+      image: registry.digitalocean.com/gitbid/api:cbc67d1a
       ports:
         - containerPort: 80
       env:

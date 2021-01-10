@@ -84,7 +84,7 @@ async function start() {
                     res.send(resp.rows);
 
                 } else {
-                    res.send(err)
+                    res.send("ERROROROROOR")
                 }
 
                 client.end();

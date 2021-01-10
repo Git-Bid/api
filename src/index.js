@@ -44,7 +44,8 @@ const port = 8080
 
 
 async function start() {
-    console.log(process.env)
+    console.log("ENVIRONMENT", process.env)
+    console.log("DATABASE", process.env.database)
 
     const client = new Client({
         user: process.env.user,
@@ -57,9 +58,11 @@ async function start() {
 
     await client.connect()
 
-
     require('./debug')(app, isLoggedIn);
     require('./auth')(app);
+
+    //MIGRATIONS
+    require('./migrations')(app, client);
 
 
     app.get("/issue/:org/:repo/issues/:issue_id", (req, res) => {
@@ -100,11 +103,6 @@ async function start() {
             res.status(420).send("Bruh get your request together my manz🌿")
         }
     });
-
-
-    //MIGRATIONS
-    require('./migrations')(app, client);
-
 
     app.listen(port, () => {
         console.log(`Git.bid API listening at http://localhost:${port}`)

@@ -19,6 +19,7 @@ services:
     depends_on:
       - database
       - sessions
+    env_file: .env
   
 volumes:
   database-data:

@@ -74,25 +74,31 @@ async function start() {
     });
 
     const YOUR_DOMAIN = 'http://localhost:3000';
-    app.post('/create-checkout-session', async(req, res) => {
-        const session = await stripe.checkout.sessions.create({
-            payment_method_types: ['card'],
-            line_items: [{
-                price_data: {
-                    currency: 'usd',
-                    product_data: {
-                        name: 'Stubborn Attachments',
-                        images: ['https://i.imgur.com/EHyR2nP.png'],
+    app.post('/create/bounty', async(req, res) => {
+        let amount = req.body.amount;
+        let issue_id = req.body.issue_id;
+        if (typeof amount === "number" && issue_id != null) {
+            const session = await stripe.checkout.sessions.create({
+                payment_method_types: ['card'],
+                line_items: [{
+                    price_data: {
+                        currency: 'usd',
+                        product_data: {
+                            name: 'Sponsor Issue #{issue_id}',
+                            //images: ['https://i.imgur.com/EHyR2nP.png'],
+                        },
+                        unit_amount: amount,
                     },
-                    unit_amount: 2000,
-                },
-                quantity: 1,
-            }, ],
-            mode: 'payment',
-            success_url: `${YOUR_DOMAIN}/success.html`,
-            cancel_url: `${YOUR_DOMAIN}/cancel.html`,
-        });
-        res.json({ id: session.id });
+                    quantity: 1,
+                }, ],
+                mode: 'payment',
+                success_url: `${YOUR_DOMAIN}/success.html`,
+                cancel_url: `${YOUR_DOMAIN}/cancel.html`,
+            });
+            res.json({ id: session.id });
+        } else {
+            res.status(420).send("Bruh get your request together my manz🌿")
+        }
     });
 
 

@@ -58,7 +58,8 @@ async function start() {
         database: process.env.database,
         password: process.env.password,
         port: process.env.postgresport, //5432
-        ssl: {
+        ssl: process.env.database == "postgres" ? false : {
+
             ca: fs.readFileSync(path.join(__dirname, './ca-certificate.crt')).toString(),
         }
     });

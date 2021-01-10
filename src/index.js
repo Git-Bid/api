@@ -56,11 +56,6 @@ async function start() {
         res.send(req.params);
     });
 
-    //DEBUG
-    // app.get('/', (req, res) => {
-    //     res.send('Welcome to the <a href="https://git.bid">git.bid</a> api!')
-    // })
-
 
     app.post("/post/bounty", isLoggedIn, isBounty, (req, res) => {
         console.log(req.body)

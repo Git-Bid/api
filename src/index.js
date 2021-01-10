@@ -1,6 +1,10 @@
 const express = require('express')
+var cors = require('cors')
+
 const app = express()
-var session = require("express-session");
+app.use(cors())
+
+var express_session = require("express-session");
 const passport = require('passport');
 const { Client } = require('node-postgres');
 const bodyParser = require('body-parser')
@@ -11,7 +15,7 @@ require('dotenv').config();
 
 
 
-const redisStore = require('connect-redis')(session);
+const redisStore = require('connect-redis')(express_session);
 const stripe = require('stripe')('sk_test_51I7ulLHX1rk5bSX1MK50H6Dh0XUareNF98jfCZY6QT0Xxkek3btpPg4FpAHDD6RlUZxJjtJ3ryu2yqtmGxJ7Y1SG00EgWrpU48');
 
 
@@ -19,7 +23,7 @@ const redisClient = redis.createClient({
     host: "sessions"
 });
 
-app.use(session({
+app.use(express_session({
     secret: 'Jacob iz hawt',
     name: 'Sessionssss',
     resave: false,
@@ -62,18 +66,35 @@ async function start() {
         res.send(req.params);
     });
 
-    //DEBUG
-    // app.get('/', (req, res) => {
-    //     res.send('Welcome to the <a href="https://git.bid">git.bid</a> api!')
-    // })
-
 
     app.post("/post/bounty", isLoggedIn, isBounty, (req, res) => {
         console.log(req.body)
         res.send(req.body.issue)
 
     });
-    
+
+    const YOUR_DOMAIN = 'http://localhost:3000';
+    app.post('/create-checkout-session', async(req, res) => {
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ['card'],
+            line_items: [{
+                price_data: {
+                    currency: 'usd',
+                    product_data: {
+                        name: 'Stubborn Attachments',
+                        images: ['https://i.imgur.com/EHyR2nP.png'],
+                    },
+                    unit_amount: 2000,
+                },
+                quantity: 1,
+            }, ],
+            mode: 'payment',
+            success_url: `${YOUR_DOMAIN}/success.html`,
+            cancel_url: `${YOUR_DOMAIN}/cancel.html`,
+        });
+        res.json({ id: session.id });
+    });
+
 
     //MIGRATIONS
     require('./migrations')(app, client);

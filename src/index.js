@@ -1,26 +1,45 @@
 const express = require('express')
 const app = express()
-const cookieSession = require('cookie-session')
+var session = require("express-session");
 const passport = require('passport');
+const { Client } = require('node-postgres');
+const bodyParser = require('body-parser')
 require('./passport')
+const redis = require('redis');
+
+const redisStore = require('connect-redis')(session);
+
+const redisClient = redis.createClient({
+    host: "sessions"
+});
+
+app.use(session({
+    secret: 'Jacob iz hawt',
+    name: 'Sessionssss',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false }, // Note that the cookie-parser module is no longer needed
+    store: new redisStore({ host: 'sessions', port: 6379, client: redisClient, ttl: 86400 }),
+}, ), );
+
 const isLoggedIn = require('./middleware/auth')
+const isBounty = require('./middleware/bounty')
 
 
-// app.use(cookieSession({
-//     name: 'github-auth-session',
-//     keys: ['key1', 'key2']
-// }))
 
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(passport.initialize());
+
+
+
+
 app.use(passport.session());
 
 
 
+
+
 const port = 8080
-
-const { Client } = require('node-postgres');
-const bodyParser = require('body-parser')
-
 
 app.use(bodyParser.json());
 
@@ -36,14 +55,11 @@ async function start() {
     await client.connect()
 
     // AUTH
-    app.get('/', (req, res) => {
-        res.send(`Hello world ${req.user.displayName}`)
-    })
     app.get('/auth/error', (req, res) => res.send('Unknown Error'))
     app.get('/auth/github', passport.authenticate('github', { scope: ['user:email'] }));
     app.get('/auth/github/callback', passport.authenticate('github', { failureRedirect: '/auth/error' }),
         function(req, res) {
-            res.redirect('/');
+            res.redirect('/check/login');
         });
 
     app.get('/logout', (req, res) => {
@@ -65,12 +81,14 @@ async function start() {
     // app.get('/', (req, res) => {
     //     res.send('Welcome to the <a href="https://git.bid">git.bid</a> api!')
     // })
-
+    app.get('/', (req, res) => {
+        res.send(`Welcome to <a href="https://gitbid.com">api.gitbid.com</a>`)
+    })
     app.get('/status', (req, res) => {
         res.send("Operational🚀");
     })
 
-    app.get('/check/login', isLoggedIn, isLoggedIn, (req, res) => {
+    app.get('/check/login', isLoggedIn, (req, res) => {
         res.send(req.user);
     });
 
@@ -78,15 +96,19 @@ async function start() {
         console.log(`Git.bid API listening at http://localhost:${port}`)
     })
 
-
-
-    app.post("/post/bounty", (req, res) => {
+    app.post("/post/bounty", isLoggedIn, isBounty, (req, res) => {
         console.log(req.body)
-        res.send(req.body)
+        res.send(req.body.issue)
+
+        // let query = 'INSERT ;'
+        // let response = await client.query(query);
+
+        //pk_test_51I7ulLHX1rk5bSX1NWKzYasE7DIcdINuZNebzwx6ywnMypYfnlVLR0pVg6MuTc8I3GuMmY4Fcymhhqhw2pcO3w8g00yko2X1T2
+
+        // sk_test_51I7ulLHX1rk5bSX1MK50H6Dh0XUareNF98jfCZY6QT0Xxkek3btpPg4FpAHDD6RlUZxJjtJ3ryu2yqtmGxJ7Y1SG00EgWrpU48
     });
 
     //MIGRATIONS
-
     app.get("/init", async(req, res) => {
         let query = 'CREATE TABLE bounties (issue Text, bounty_amount real, Github Text);'
 

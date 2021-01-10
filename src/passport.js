@@ -12,7 +12,7 @@ passport.deserializeUser(function(user, done) {
 passport.use(new GitHubStrategy({
         clientID: process.env.github_client_id,
         clientSecret: process.env.github_client_secret,
-        callbackURL: "http://localhost:8080/auth/github/callback"
+        callbackURL: "http://api.gitbid.io/auth/github/callback" //"http://localhost:8080/auth/github/callback"
     },
     function(accessToken, refreshToken, profile, done) {
         return done(null, profile);

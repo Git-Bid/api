@@ -8,9 +8,9 @@ spec:
   hostNetwork: true
   containers:
     - name: api
-      image: registry.digitalocean.com/gitbid/api:e8208379
+      image: registry.digitalocean.com/gitbid/api:e8896dee
       ports:
-        - containerPort: 8080
+        - containerPort: 80
       env:
         - name: user
           value: "doadmin"

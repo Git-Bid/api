@@ -6,6 +6,9 @@ const { Client } = require('node-postgres');
 const bodyParser = require('body-parser')
 require('./passport')
 const redis = require('redis');
+require('./debug')(app);
+require('./auth.js')(app);
+
 
 const redisStore = require('connect-redis')(session);
 
@@ -30,14 +33,7 @@ const isBounty = require('./middleware/bounty')
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(passport.initialize());
 
-
-
-
 app.use(passport.session());
-
-
-
-
 
 const port = 8080
 
@@ -54,25 +50,6 @@ async function start() {
 
     await client.connect()
 
-    // AUTH
-    app.get('/auth/error', (req, res) => res.send('Unknown Error'))
-    app.get('/auth/github', passport.authenticate('github', { scope: ['user:email'] }));
-    app.get('/auth/github/callback', passport.authenticate('github', { failureRedirect: '/auth/error' }),
-        function(req, res) {
-            res.redirect('/check/login');
-        });
-
-    app.get('/logout', (req, res) => {
-        req.session = null;
-        req.logout();
-        res.redirect('/');
-    })
-
-    app.get('/hello', (req, res) => {
-        res.send(`Hello world ${req.user.displayName}`)
-    })
-
-    //GET
     app.get("/issue/:org/:repo/issues/:issue_id", (req, res) => {
         res.send(req.params);
     });
@@ -81,16 +58,7 @@ async function start() {
     // app.get('/', (req, res) => {
     //     res.send('Welcome to the <a href="https://git.bid">git.bid</a> api!')
     // })
-    app.get('/', (req, res) => {
-        res.send(`Welcome to <a href="https://gitbid.com">api.gitbid.com</a>`)
-    })
-    app.get('/status', (req, res) => {
-        res.send("Operational🚀");
-    })
-
-    app.get('/check/login', isLoggedIn, (req, res) => {
-        res.send(req.user);
-    });
+    
 
     app.post("/post/bounty", isLoggedIn, isBounty, (req, res) => {
         console.log(req.body)

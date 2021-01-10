@@ -66,7 +66,16 @@ async function start() {
 
 
     app.get("/issue/:org/:repo/issues/:issue_id", (req, res) => {
-        res.send(req.params);
+        try{
+            let query = `SELECT * FROM bounties WHERE issue IN ('hasura/graphql-engine/issues/6337');`;
+            client.query(query, (err, resp) => {
+                res.send(resp.rows);
+                client.end();
+            }); 
+        }
+        catch(error){
+            res.status(420).send("there was an error getting this");
+        }
     });
 
 

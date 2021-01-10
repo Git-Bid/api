@@ -6,7 +6,7 @@ app.use(cors())
 
 var express_session = require("express-session");
 const passport = require('passport');
-const { Client } = require('node-postgres');
+const { Client } = require('pg');
 const bodyParser = require('body-parser')
 require('./passport')
 const redis = require('redis');
@@ -44,7 +44,8 @@ const port = 8080
 
 
 async function start() {
-    console.log(process.env)
+    console.log("ENVIRONMENT", process.env)
+    console.log("DATABASE", process.env.database)
 
     const client = new Client({
         user: process.env.user,
@@ -57,9 +58,11 @@ async function start() {
 
     await client.connect()
 
-
     require('./debug')(app, isLoggedIn);
     require('./auth')(app);
+
+    //MIGRATIONS
+    require('./migrations')(app, client);
 
 
     app.get("/issue/:org/:repo/issues/:issue_id", (req, res) => {
@@ -76,31 +79,32 @@ async function start() {
     });
 
     const YOUR_DOMAIN = 'http://localhost:3000';
-    app.post('/create-checkout-session', async(req, res) => {
-        const session = await stripe.checkout.sessions.create({
-            payment_method_types: ['card'],
-            line_items: [{
-                price_data: {
-                    currency: 'usd',
-                    product_data: {
-                        name: 'Stubborn Attachments',
-                        images: ['https://i.imgur.com/EHyR2nP.png'],
+    app.post('/create/bounty', async(req, res) => {
+        let amount = req.body.amount;
+        let issue_id = req.body.issue_id;
+        if (typeof amount === "number" && issue_id != null) {
+            const session = await stripe.checkout.sessions.create({
+                payment_method_types: ['card'],
+                line_items: [{
+                    price_data: {
+                        currency: 'usd',
+                        product_data: {
+                            name: 'Sponsor Issue #${issue_id}',
+                            //images: ['https://i.imgur.com/EHyR2nP.png'],
+                        },
+                        unit_amount: amount,
                     },
-                    unit_amount: 2000,
-                },
-                quantity: 1,
-            }, ],
-            mode: 'payment',
-            success_url: `${YOUR_DOMAIN}/success.html`,
-            cancel_url: `${YOUR_DOMAIN}/cancel.html`,
-        });
-        res.json({ id: session.id });
+                    quantity: 1,
+                }, ],
+                mode: 'payment',
+                success_url: `${YOUR_DOMAIN}/success.html`,
+                cancel_url: `${YOUR_DOMAIN}/cancel.html`,
+            });
+            res.json({ id: session.id });
+        } else {
+            res.status(420).send("Bruh get your request together my manz🌿")
+        }
     });
-
-
-    //MIGRATIONS
-    require('./migrations')(app, client);
-
 
     app.listen(port, () => {
         console.log(`Git.bid API listening at http://localhost:${port}`)

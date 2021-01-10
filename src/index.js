@@ -1,5 +1,9 @@
 const express = require('express')
+var cors = require('cors')
+
 const app = express()
+app.use(cors())
+
 var express_session = require("express-session");
 const passport = require('passport');
 const { Client } = require('node-postgres');

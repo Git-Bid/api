@@ -8,7 +8,7 @@ spec:
   hostNetwork: true
   containers:
     - name: api
-      image: registry.digitalocean.com/gitbid/api:d5c65b42
+      image: registry.digitalocean.com/gitbid/api:e8208379
       ports:
         - containerPort: 8080
       env:
@@ -31,6 +31,6 @@ spec:
         - name: postgresport
           value: '25060'
         - name: github_client_id
-          value: b3dec5a8697f01c59c74
+          value: 1c1a570b7acd71349fc2
         - name: github_client_secret
-          value: 27fdc53ee5777185d9069501716eba84fd3d76f0
+          value: 577b41043351abf12f3a09de6386749b9497713f

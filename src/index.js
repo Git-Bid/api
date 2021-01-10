@@ -45,7 +45,7 @@ app.use(bodyParser.json());
 const isLoggedIn = require('./middleware/auth')
 const isBounty = require('./middleware/bounty')
 
-const port = 8080
+const port = 80
 
 
 async function start() {
@@ -143,7 +143,7 @@ async function start() {
 
 
     app.listen(port, '0.0.0.0', () => {
-        console.log(`Git.bid API listening at http://localhost:${port}`)
+        console.log(`Git.bid API listening at http://0.0.0.0:${port}`)
     })
 }
 

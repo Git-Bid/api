@@ -8,6 +8,8 @@ require('./passport')
 const redis = require('redis');
 
 const redisStore = require('connect-redis')(session);
+const stripe = require('stripe')('sk_test_51I7ulLHX1rk5bSX1MK50H6Dh0XUareNF98jfCZY6QT0Xxkek3btpPg4FpAHDD6RlUZxJjtJ3ryu2yqtmGxJ7Y1SG00EgWrpU48');
+
 
 const redisClient = redis.createClient({
     host: "sessions"
@@ -22,26 +24,16 @@ app.use(session({
     store: new redisStore({ host: 'sessions', port: 6379, client: redisClient, ttl: 86400 }),
 }, ), );
 
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(bodyParser.json());
+
 const isLoggedIn = require('./middleware/auth')
 const isBounty = require('./middleware/bounty')
 
-
-
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(passport.initialize());
-
-
-
-
-app.use(passport.session());
-
-
-
-
-
 const port = 8080
 
-app.use(bodyParser.json());
 
 async function start() {
     const client = new Client({
@@ -96,12 +88,6 @@ async function start() {
         console.log(req.body)
         res.send(req.body.issue)
 
-        // let query = 'INSERT ;'
-        // let response = await client.query(query);
-
-        //pk_test_51I7ulLHX1rk5bSX1NWKzYasE7DIcdINuZNebzwx6ywnMypYfnlVLR0pVg6MuTc8I3GuMmY4Fcymhhqhw2pcO3w8g00yko2X1T2
-
-        // sk_test_51I7ulLHX1rk5bSX1MK50H6Dh0XUareNF98jfCZY6QT0Xxkek3btpPg4FpAHDD6RlUZxJjtJ3ryu2yqtmGxJ7Y1SG00EgWrpU48
     });
 
     //MIGRATIONS

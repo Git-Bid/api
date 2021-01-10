@@ -91,14 +91,14 @@ async function start() {
     app.post('/create/bounty', async(req, res) => {
         let amount = req.body.amount;
         let issue_id = req.body.issue_id;
-        if (typeof amount === "number" && issue_id != null) {
+        if ( /*typeof amount === "number" && issue_id != null*/ true) {
             const session = await stripe.checkout.sessions.create({
                 payment_method_types: ['card'],
                 line_items: [{
                     price_data: {
                         currency: 'usd',
                         product_data: {
-                            name: 'Sponsor Issue #${issue_id}',
+                            name: 'Sponsor Issue ' + issue_id,
                             //images: ['https://i.imgur.com/EHyR2nP.png'],
                         },
                         unit_amount: amount,
@@ -111,9 +111,19 @@ async function start() {
             });
             res.json({ id: session.id });
         } else {
-            res.status(420).send("Bruh get your request together my manz🌿")
+            res.status(420).json({ "message": "Bruh get your request together my manz🌿" })
         }
     });
+
+
+    app.post('/webhook', bodyParser.raw({ type: 'application/json' }), (request, response) => {
+        const payload = request.body;
+
+        console.log("Got payload: " + payload);
+
+        response.status(200);
+    });
+
 
     app.listen(port, () => {
         console.log(`Git.bid API listening at http://localhost:${port}`)
